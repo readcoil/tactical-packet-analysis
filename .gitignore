@@ -1,0 +1,10 @@
+tpahelper/pcaps/**
+tpahelper/processed/**
+*.pcap
+*.pcapng
+*.json
+*.txt
+*.log
+.idea
+*.pyc
+.DS_Store
