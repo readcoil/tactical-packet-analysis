@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+<head>
+    <title>PCAP Files</title>
+</head>
+
+{% block sidebar %}
+    {% include 'sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Capture Summary:<h1>
+        <h2>File: {{ filename }}</h2>
+        {% for section, items in summary.items() %}
+        <div class="card my-3">
+            <div class="card-header green-header">{{ section }}</div>
+            <div class="card-body">
+                <div class="row">
+                    {% for item in items %}
+                    <div class="col-md-4">
+                        <div class="card mb-2 text-center">
+                            <div class="card-header">{{ item.key }}</div>
+                            <div class="card-body">
+                                {{ item.value }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+

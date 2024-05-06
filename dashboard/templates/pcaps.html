@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+<head>
+    <title>PCAP Files</title>
+</head>
+
+{% block content %}
+    <script>
+        function handleSelectAction(element, filename) {
+            var action = "";
+
+            // Check if the element is a <select> or a <span>
+            if (element.tagName === "SELECT") {
+                action = element.value;
+                // Reset the select element to its default state
+                element.selectedIndex = 0;
+            } else if (element.tagName === "SPAN") {
+                // For <span>, use a data attribute to determine the action
+                action = element.getAttribute("data-action");
+            }
+            if (action === "summary") {
+                // Implement download action or redirect
+                console.log("Summary action for", filename);
+                window.location.href = "/summary/" + encodeURIComponent(filename);
+            }
+            else if (action === "running") {
+                // Implement download action or redirect
+                console.log("Viewing task manager for", filename);
+                window.location.href = "/luigi";
+            }
+            // Check the selected action and act accordingly
+            else if (action === "flows") {
+                // Redirect to the summary page for the selected pcap file
+                window.location.href = "/flows/" + encodeURIComponent(filename);
+            } else if (action === "delete") {
+                // Implement delete action or redirect
+                // console.log("Delete action for", filename);
+                // Example: window.location.href = "/delete/" + encodeURIComponent(filename);
+            } else if (action === "analyze") {
+                // Implement analyze action or redirect
+                console.log("Analyze action for", filename);
+                    $.ajax({
+                        type: 'GET',
+                        url: `/analyze/${encodeURIComponent(filename)}`,
+                        success: function(response) {
+                            console.log(response);
+                            // Directly use the message from the response for user feedback
+                            $('#response-message').text(response.message);
+                            showToast(response.message);
+
+                            // Change the button from "Run" to "View" indicating the start of analysis
+                            var analyzeBtn = $('span.analyze-btn[data-filename="' + encodeURIComponent(filename) + '"]');
+                            analyzeBtn.removeClass('bg-primary').addClass('bg-warning');
+                            analyzeBtn.text('Running');
+                            analyzeBtn.attr('data-action', 'summary');
+                        },
+
+                        error: function(xhr, status, error) {
+                            console.error("Error: " + xhr.responseText);
+                            $('#response-message').text("An error occurred during analysis.");
+                            showToast('An error occurred during analysis.');
+                        }
+                    });
+            } else if (action === "download") {
+                // Implement download action or redirect
+                console.log("Download action for", filename);
+                // Example: window.location.href = "/download/" + encodeURIComponent(filename);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Call the function immediately when the page loads
+            updateTaskStatus();
+
+            // Then set it to run the function every 5 seconds
+            setInterval(updateTaskStatus, 5000);
+        });
+
+        function updateTaskStatus() {
+            const elements = document.querySelectorAll('.analyze-btn');
+            elements.forEach(element => {
+                const filename = element.getAttribute('data-filename');
+
+                // Send AJAX request to check the status
+                fetch(`/status/${encodeURIComponent(filename)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const status = data.analyzed;
+                        switch (status) {
+                            case 'new':
+                                element.classList.remove('bg-success', 'bg-danger', 'bg-warning');
+                                element.classList.add('bg-secondary');
+                                element.textContent = 'Analyze';
+                                element.onclick = () => handleSelectAction(element, filename);
+                                break;
+                            case 'running':
+                                element.classList.remove('bg-success', 'bg-danger', 'bg-secondary');
+                                element.classList.add('bg-warning');
+                                element.textContent = 'Running';
+                                element.onclick = () => handleSelectAction(element, filename);
+                                break;
+                            case 'failed':
+                                element.classList.remove('bg-success', 'bg-warning', 'bg-secondary');
+                                element.classList.add('bg-danger');
+                                element.textContent = 'Failed';
+                                element.setAttribute('data-action', 'analyze'); // Possibly retry
+                                element.onclick = () => handleSelectAction(element, filename);
+                                break;
+                            case 'done':
+                                element.classList.remove('bg-danger', 'bg-warning', 'bg-secondary');
+                                element.classList.add('bg-success');
+                                element.textContent = 'View';
+                                element.setAttribute('data-action', 'summary');
+                                element.onclick = () => handleSelectAction(element, filename);
+                                break;
+                        }
+                    })
+                    .catch(error => console.error('Error updating task status:', error));
+            });
+        }
+
+    </script>
+
+
+    <div class="container-fluid flows-container">
+        <h2>Packet captures</h2>
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center">ID</th>
+                    <th>Filename</th>
+                    <th class="text-center">Analysis</th>
+                    <!--                    <th>Actions</th>-->
+                </tr>
+            </thead>
+            <tbody>
+                {% for pcap in pcaps %}
+                    <tr>
+                        <td class="text-center">{{ pcap.id }}</td>
+                        <td>{{ pcap.filename }}</td>
+                        <td class="text-center">
+                            {% if pcap.analyzed %}
+                                <span class="analyze-btn badge bg-success" data-filename="{{ pcap.filename }}" data-action="summary" onclick="handleSelectAction(this, '{{ pcap.filename }}')" style="cursor: pointer;">View</span>
+                            {% else %}
+                                <span class="analyze-btn badge bg-secondary" data-filename="{{ pcap.filename }}" data-action="analyze" onclick="handleSelectAction(this, '{{ pcap.filename }}')" style="cursor: pointer;">Run</span>
+                            {% endif %}
+                        </td>
+<!--                        <td>-->
+<!--                            <select id="actionSelect" onchange="handleSelectAction(this, '{{ pcap.filename }}')">-->
+<!--                                <option value="">Select action...</option>-->
+<!--                                {% if pcap.analyzed %}-->
+<!--                                    <option value="flows">Flows</option>-->
+<!--                                {% else %}-->
+<!--                                    <option value="analyze">Analyze</option>-->
+<!--                                {% endif %}-->
+<!--                                <option value="delete">Delete</option>-->
+<!--                                <option value="download">Download</option>-->
+<!--                            </select>-->
+<!--                        </td>-->
+                    </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+

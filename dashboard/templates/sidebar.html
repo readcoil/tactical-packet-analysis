@@ -1,0 +1,16 @@
+<div class="col-md-2 d-flex flex-column flex-shrink-0 p-3 bg-light">
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="/summary" class="nav-link {% if request.path.startswith('/summary') %}active{% endif %}" aria-current="page">Summary</a>
+        </li>
+        <li>
+            <a href="/protocols/{{ filename }}" class="nav-link" target="_blank" rel="noopener noreferrer">Protocols</a>
+        </li>
+        <li>
+            <a href="/flows/{{ filename }}" class="nav-link" target="_blank" rel="noopener noreferrer">Flows</a>
+        </li>
+        <li>
+            <a href="/indicators/{{ filename }}" class="nav-link" target="_blank" rel="noopener noreferrer">Indicators</a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,129 @@
+body {
+    padding: 20px;
+}
+
+.dataframe {
+    margin-top: 20px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: auto; /* Prevent scrollbars */
+}
+
+iframe {
+    width: 100%;
+    height: 100vh;
+    border: none; /* Optional: removes the border around the iframe */
+}
+
+.card-header {
+    background-color: darkseagreen;
+    color: #333; /* Adjust the text color if needed */
+}
+
+.green-header {
+    background-color: darkseagreen;
+    color: #333; /* Adjust text color if needed */
+}
+
+.details-container {
+    background-color: hsl(0, 0%, 100%); /* Light grey background */
+    border: 1px solid #dee2e6; /* Light grey border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.details-container p, .details-container ul {
+    margin-bottom: 0; /* Reduce bottom margin for a compact look */
+}
+
+.details-container ul {
+    padding-left: 20px; /* Standard indent for list */
+}
+
+.flows-container {
+    padding-left: 0;
+    text-align: left;
+}
+
+.flow-detail-column {
+    padding-left: 0;
+    background-color: hsl(0, 0%, 100%); /* Light grey background */
+}
+
+table th {
+    text-align: left;
+}
+
+.toast-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    pointer-events: none;
+    z-index: 1055; /* Ensure it's above most other elements */
+}
+
+.toast {
+    pointer-events: auto; /* Allow interaction with the toast */
+}
+
+.sidebar-fixed {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 250px; /* Adjust the width of the sidebar */
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+.content-offset {
+    margin-left: 250px; /* Same as sidebar width */
+}
+
+#network {
+    width: 100%;
+    height: 400px;
+}
+
+/* Style for the network div when it's in full-screen mode */
+:fullscreen #network,
+:-webkit-full-screen #network,
+:-moz-full-screen #network,
+:-ms-fullscreen #network,
+#network.fullscreen {
+    background-color: white; /* Set background color to white */
+    /* You may add other styles here to ensure the content looks good on a white background */
+}
+
+#fieldsList { 
+    padding: 20px; 
+    background-color: #f7f7f7;
+    min-height: 100vh;
+}
+.draggable-field {
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+.dropzone {
+    min-height: 100px;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.drop-item {
+    cursor: pointer;
+    display: block;
+}
+
+#fieldsList {
+    overflow-y: auto; /* Enables vertical scrolling */
+    max-height: 100vh; /* Adjust this value as needed */
+    /* Optional: additional styling to ensure a good appearance */
+    padding-right: 15px; /* Adjusts padding to avoid scrollbar overlap */
+}
