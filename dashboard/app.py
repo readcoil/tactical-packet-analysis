@@ -1,40 +1,27 @@
 import os
-import csv
-import json
+import glob
 import pandas as pd
-import ipaddress
-import subprocess
-import time
-from tabulate import tabulate
-from loguru import logger
 import luigi
 from multiprocessing import Process
 from dtale.app import build_app
 from dtale.global_state import cleanup
 from dtale.views import startup
 from flask import (
-    Flask,
     request,
     render_template,
-    render_template_string,
     redirect,
     url_for,
     flash,
     jsonify,
     send_file,
     send_from_directory,
-    make_response,
 )
-
 from markupsafe import escape
+from pprint import pprint
 from werkzeug.utils import secure_filename
-from ydata_profiling import ProfileReport
 
 from tpahelper.config import config
 from tpahelper.analyze_pcap import AllTasks
-
-# app = Flask(__name__)
-# app.secret_key = "shouldntreallymatterwhatthisis_demoapponly"
 
 # Ensure the upload folder exists
 os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
@@ -42,6 +29,7 @@ os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in config.ALLOWED_EXTENSIONS
+
 
 def run_luigi_task_in_subprocess(filename):
     print(f"Running luigi task for {filename}")
@@ -52,10 +40,10 @@ def run_luigi_task_in_subprocess(filename):
     task = AllTasks(pcap_file=pcap_path)
     luigi.build([task], workers=config.WORKERS)
 
+
 def check_task_status(filename):
     # Checks for the presence of the following files:
     # queue.txt, done.txt, and failed.txt in the output directory
-    pcap_path = os.path.join(config.UPLOAD_FOLDER, filename)
     output_path = os.path.join(config.OUTPUT_DIR, filename.replace('.pcap', ''))
     queue_file = os.path.join(output_path, 'task_created.txt')
     done_file = os.path.join(output_path, 'all_tasks_complete.txt')
@@ -69,6 +57,7 @@ def check_task_status(filename):
         return "running"
     else:
         return "new"
+
 
 def get_output_files(filename):
     output_path = os.path.join(config.OUTPUT_DIR, filename.replace('.pcap', ''))
@@ -129,7 +118,6 @@ def launch_dashboard():
     def index():
         return render_template("index.html")
 
-
     @app.route("/pcaps", methods=["GET"])
     def pcaps():
         pcaps = [
@@ -147,7 +135,6 @@ def launch_dashboard():
         }
 
         return render_template("pcaps.html", **context)
-
 
     @app.route("/upload", methods=["POST"])
     def upload_file():
@@ -167,11 +154,19 @@ def launch_dashboard():
             flash("Invalid file type")
             return redirect(url_for("pcaps"))
 
-
     @app.route("/download/<filename>", methods=["GET"])
     def download_file(filename):
         return send_file(os.path.join(config.UPLOAD_DIR, filename), as_attachment=True)
 
+    @app.route("/download_proto_pcap/<filename>/<protocol>", methods=["GET"])
+    def download_proto_pcap(filename, protocol):
+        return send_file(os.path.join(config.OUTPUT_DIR, filename.replace('.pcap', ''),
+                                      'protocols', 'pcaps', f"{filename}_{protocol}.pcap"), as_attachment=True)
+
+    @app.route("/luigi", methods=["GET"])
+    def luigi():
+        # redirect to the luigi task status page
+        return redirect(url_for("luigi_iframe"))
 
     @app.route("/analyze/<filename>", methods=["GET"])
     def analyze_file(filename):
@@ -190,7 +185,6 @@ def launch_dashboard():
 
     @app.route('/status/<filename>')
     def get_status(filename):
-        # Assume a function `check_task_status` determines if `filename` has been analyzed
         analyzed = check_task_status(filename)
         return jsonify({'analyzed': analyzed})
 
@@ -198,19 +192,14 @@ def launch_dashboard():
     def summary(filename):
         output_files = get_output_files(filename)
 
-        summary = process_ndpi_summary(output_files.get('ndpi_summary', None))
+        summary_data = process_ndpi_summary(output_files.get('ndpi_summary', None))
 
-        return render_template("summary.html", summary=summary, filename=filename)
+        return render_template("summary.html", summary=summary_data, filename=filename)
 
     @app.route('/indicators/<filename>')
     def indicators(filename):
         indicator_parquet = get_output_files(filename).get('ip_rep', None)
         df = pd.read_parquet(indicator_parquet)
-
-        # profile = ProfileReport(df, title=f'Indicator Report for {filename}', explorative=True)
-        # profile_html = profile.to_html()
-        #
-        # return render_template_string(profile_html)
 
         cleanup("1")
         instance = startup(data_id="1", data=df)
@@ -227,8 +216,66 @@ def launch_dashboard():
 
     @app.route('/protocols/<filename>')
     def protocols(filename):
-        proto_values = get_output_files(filename).get('proto_values', None)
-        df = pd.read_parquet(os.path.join(proto_values, 'dnp3_point_values.parquet'))
+        strings_file_path = get_output_files(filename).get('proto_string_dir', None)
+        pcap_file_path = get_output_files(filename).get('proto_pcap_dir', None)
+        values_file_path = get_output_files(filename).get('proto_values', None)
+
+        # Get list of strings_files
+        strings_files = glob.glob(strings_file_path + '/*.txt')
+        print(f"Strings path: {strings_file_path}")
+        print(f"Strings files: {strings_files}")
+
+        # Get list of pcap_files
+        pcap_files = glob.glob(pcap_file_path + '/*.pcap')
+        print(f"PCAP path: {pcap_file_path}")
+        print(f"PCAP files: {pcap_files}")
+
+        # Get list of values_files
+        values_files = glob.glob(values_file_path + '/*.parquet')
+        print(f"Values path: {values_file_path}")
+        print(f"Values files: {values_files}")
+
+        protocols = set((os.path.basename(f).split('/')[-1]).split('_')[0]
+                        for f in strings_files
+                        if 'complete' not in f)
+
+        protocol_data = []
+        for protocol in protocols:
+            pcap_file = os.path.join(pcap_file_path, f"{filename}_{protocol}.pcap")
+            if not os.path.exists(pcap_file):
+                pcap_file = None
+
+            strings_file = os.path.join(strings_file_path, f"{protocol}_strings.txt")
+            if not os.path.exists(strings_file):
+                strings_file = None
+
+            values_file = os.path.join(values_file_path, f"{protocol}_values.parquet")
+            if not os.path.exists(values_file):
+                values_file = None
+
+            protocol_data.append({
+                'protocol': protocol,
+                'pcap_file': pcap_file,
+                'strings_file': strings_file,
+                'values_file': values_file
+            })
+
+        pprint(protocol_data)
+
+        return render_template("protocols.html", protocol_data=protocol_data, filename=filename)
+
+    @app.route('/strings/<filename>/<protocol>')
+    def strings(filename, protocol):
+        strings = os.path.join(get_output_files(filename).get('proto_string_dir', None), f"{protocol}_strings.txt")
+        with open(strings, "r") as infile:
+            data = infile.readlines()
+
+        return render_template("strings.html", data=data, filename=filename, protocol=protocol)
+
+    @app.route('/values/<filename>/<protocol>')
+    def values(filename, protocol):
+        values = os.path.join(get_output_files(filename).get('proto_values', None), f"{protocol}_values.parquet")
+        df = pd.read_parquet(values)
 
         cleanup("1")
         instance = startup(data_id="1", data=df)
@@ -238,8 +285,7 @@ def launch_dashboard():
     def luigi_iframe():
         return render_template("luigi_iframe.html")
 
-
-    app.run(debug=True, port=config.DASH_PORT)
+    app.run(port=config.DASH_PORT, debug=True)
 
 
 if __name__ == "__main__":

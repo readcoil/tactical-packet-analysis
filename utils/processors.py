@@ -37,7 +37,7 @@ class DNP3Processor:
         self.infile = infile
         self.outpath = outpath
         self.output_json = os.path.join(self.outpath, "target_dnp3.json")
-        self.output_parquet = os.path.join(self.outpath, "dnp3_point_values.parquet")
+        self.output_parquet = os.path.join(self.outpath, "dnp3_values.parquet")
         self.output_html = os.path.join(self.outpath, "dnp3_point_value_charts.html")
         self.dnp3_types = ['int', 'double', 'float']
         self.dnp3_point_types = ['dnp3.al.ana.', 'dnp3.al.anaout.']

@@ -1,24 +1,14 @@
 {% extends 'base.html' %}
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<head>
-    <title>PCAP Files</title>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* Prevent scrollbars */
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none; /* Optional: removes the border around the iframe */
-        }
-    </style>
-</head>
+
+{% block sidebar %}
+    {% include 'sidebar.html' %}
+{% endblock %}
+
 
 {% block content %}
-    <iframe src="http://127.0.0.1:8082"></iframe>
+    <div class="container-fluid p-0 h-100">
+        <iframe src="http://127.0.0.1:8082"></iframe>
+    </div>
 {% endblock %}
 
 

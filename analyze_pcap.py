@@ -1,6 +1,5 @@
 from datetime import datetime
 from pandas import json_normalize
-from tabulate import tabulate
 from termcolor import colored
 
 import ast
@@ -23,8 +22,6 @@ from tpahelper.utils.external_commands import (
 from tpahelper.utils.html_templates import datatable_template
 from tpahelper.utils.protocols import ndpi_protocol_map as proto_map
 from tpahelper.utils.protocols import processor_map
-
-
 
 
 

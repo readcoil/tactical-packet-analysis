@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block sidebar %}
+    {% include 'sidebar.html' %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <h1>Protocols</h1>
+        <h2>File: {{ filename }}</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Protocol</th>
+                    <th class="text-center">PCAP</th>
+                    <th class="text-center">Strings</th>
+                    <th class="text-center">Extracted Values</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for protocol in protocol_data %}
+                <tr>
+                    <td>{{ protocol.protocol }}</td>
+                    <td class="text-center">{% if protocol.pcap_file %}
+                            <img src="/static/images/pcap.svg" alt="Download PCAP" class="icon" style="height: 50px"
+                            onclick="window.location.href='/download_proto_pcap/{{ filename }}/{{ protocol.protocol }}'">
+                        {% else %}
+                            <p>-</p>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">{% if protocol.strings_file %}
+                            <img src="/static/images/txt.svg" alt="Download Strings" style="height: 45px"
+                            onclick="window.location.href='/strings/{{ filename }}/{{ protocol.protocol }}'" />
+                        {% else %}
+                            <p>-</p>
+                        {% endif %}
+                    <td class="text-center">{% if protocol.values_file %}
+                            <img src="/static/images/dataframe.svg" alt="Values Explorer" style="height: 45px"
+                            onclick="window.location.href='/values/{{ filename }}/{{ protocol.protocol }}'" />
+                        {% else %}
+                            <p>-</p>
+                        {% endif %}
+                </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+```

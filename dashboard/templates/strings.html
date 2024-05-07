@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block sidebar %}
+    {% include 'sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Strings</h1>
+        <h2>PCAP: {{ filename }}, Protocol: {{ protocol }}</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>String</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for string in data %}
+                <tr>
+                    <td>{{ string }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+{% endblock %}
+```

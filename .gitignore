@@ -1,5 +1,10 @@
-tpahelper/pcaps/**
-tpahelper/processed/**
+pcaps/**
+processed/**
+uploads/**
+venv/**
+*.parquet
+*.txt
+*.cap*
 *.pcap
 *.pcapng
 *.json
@@ -8,3 +13,4 @@ tpahelper/processed/**
 .idea
 *.pyc
 .DS_Store
+*.swp
