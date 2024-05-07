@@ -94,11 +94,24 @@ def process_ndpi_summary(pcap_stats):
         if not any(line.startswith(word) for word in ["Using", "Reading", "Running", "'", "*", "-"]):
             if line:
                 if line.startswith("\t"):  # Item belongs to the current header
+                    # ignore "NOTE:" and \t\t line:
+                    if line.startswith("\t\t") or line.startswith("\tNOTE:") or "last column can exceed" in line:
+                        continue
+
+                    # Remove blank lines
+                    if line.strip() == "":
+                        continue
                     # Remove extra spaces and split by the first colon
                     key_value_pair = line.strip().split(": ", 1)
+
                     if len(key_value_pair) == 2:  # Properly formatted line with a key and value
                         key, value = key_value_pair
                         sections[header].append({'key': key, 'value': value})
+
+                    elif len(key_value_pair) == 1:
+                        key = key_value_pair[0]
+                        sections[header].append(key)
+
                 else:  # This is a header line
                     header = line.strip().replace(":", "")
                     sections[header] = []
@@ -106,9 +119,15 @@ def process_ndpi_summary(pcap_stats):
     return sections
 
 
+def isinstance_jinja(value, _type):
+    return isinstance(value, _type)
+
+
 def launch_dashboard():
     additional_templates = os.path.join(os.path.dirname(__file__), "templates")
     app = build_app(reaper_on=False, additional_templates=additional_templates)
+    app.jinja_env.filters['isinstance_jinja'] = isinstance_jinja
+
 
     @app.route('/static/<path:filename>')
     def custom_static(filename):

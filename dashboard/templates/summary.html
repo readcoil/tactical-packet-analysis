@@ -18,14 +18,22 @@
             <div class="card-body">
                 <div class="row">
                     {% for item in items %}
-                    <div class="col-md-4">
-                        <div class="card mb-2 text-center">
-                            <div class="card-header">{{ item.key }}</div>
-                            <div class="card-body">
-                                {{ item.value }}
+                        {% if item | isinstance_jinja(dict) %}
+                            <div class="col-md-4">
+                                <div class="card mb-2 text-center">
+                                    <div class="card-header">{{ item.key }}</div>
+                                    <div class="card-body">
+                                        {{ item.value }}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        {% else %}
+                            <div class="col-md-4">
+                                <div class="card mb-2 text-center">
+                                    <div class="card-header">{{ item }}</div>
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
