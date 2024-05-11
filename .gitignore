@@ -1,6 +1,6 @@
-pcaps/**
-processed/**
-uploads/**
+tpahelper/pcaps/**
+tpahelper/processed/**
+tpahelper/uploads/**
 venv/**
 *.parquet
 *.txt

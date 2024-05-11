@@ -10,7 +10,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: auto; /* Prevent scrollbars */
+    /*overflow: auto; !* Prevent scrollbars *!*/
 }
 
 iframe {
@@ -132,4 +132,13 @@ table th {
     max-height: 100vh; /* Adjust this value as needed */
     /* Optional: additional styling to ensure a good appearance */
     padding-right: 15px; /* Adjusts padding to avoid scrollbar overlap */
+}
+
+.clickable-image {
+    cursor: pointer; /* Changes cursor to pointer */
+    transition: transform 0.2s ease-in-out; /* Smooth transition */
+}
+
+.clickable-image:hover {
+    transform: scale(1.1); /* Slightly enlarges image on hover */
 }

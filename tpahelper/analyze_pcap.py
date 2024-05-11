@@ -364,6 +364,9 @@ class SummarizeIPReputation(BaseTask):
         else:
             df = main_df  # No pulses data to merge
 
+        # Replace empty lists with None using applymap and proper list comparison
+        df = df.applymap(lambda x: None if isinstance(x, list) and not x else x)
+
         # Write the DataFrame to parquet file
         df.to_parquet(self.out_parquet)
         html_table = df.to_html(classes='display', index=False, table_id='dataTable')

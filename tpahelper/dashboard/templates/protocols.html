@@ -23,25 +23,25 @@
                 <tr>
                     <td>{{ protocol.protocol }}</td>
                     <td class="text-center">{% if protocol.pcap_file %}
-                            <img src="/static/images/pcap.svg" alt="Download PCAP" class="icon" style="height: 50px"
-                            onclick="window.location.href='/download_proto_pcap/{{ filename }}/{{ protocol.protocol }}'">
+                            <img src="/static/images/pcap.svg" alt="Download PCAP" style="height: 50px"
+                            class="clickable-image" onclick="window.location.href='/download_proto_pcap/{{ filename }}/{{ protocol.protocol }}'">
                         {% else %}
                             <p>-</p>
                         {% endif %}
                     </td>
                     <td class="text-center">{% if protocol.strings_file %}
                             <img src="/static/images/txt.svg" alt="Download Strings" style="height: 45px"
-                            onclick="window.location.href='/strings/{{ filename }}/{{ protocol.protocol }}'" />
+                            class="clickable-image" onclick="window.location.href='/strings/{{ filename }}/{{ protocol.protocol }}'" />
                         {% else %}
                             <p>-</p>
                         {% endif %}
                     <td class="text-center">{% if protocol.values_file %}
                             <img src="/static/images/dataframe.svg" alt="Values Explorer" style="height: 45px"
-                            onclick="window.location.href='/values/{{ filename }}/{{ protocol.protocol }}'" />
+                            class="clickable-image" onclick="window.location.href='/values/{{ filename }}/{{ protocol.protocol }}'" />
                         {% else %}
                             <p>-</p>
                         {% endif %}
-                </td>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

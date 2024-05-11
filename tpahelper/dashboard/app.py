@@ -304,7 +304,8 @@ def launch_dashboard():
     def luigi_iframe():
         return render_template("luigi_iframe.html")
 
-    app.run(port=config.DASH_PORT, debug=True)
+    app.run(port=config.DASH_PORT)
+    # app.run(port=config.DASH_PORT, debug=True)
 
 
 if __name__ == "__main__":
