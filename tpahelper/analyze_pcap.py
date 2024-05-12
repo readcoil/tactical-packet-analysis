@@ -94,6 +94,15 @@ class NdpiFlowsToDataFrame(BaseTask):
         df.drop(columns=explode_columns, inplace=True)
         df = df.fillna('-')
 
+        # Rename columns (if existing) for compatibility:
+        # first_seen -> first_seen_ms
+        # last_seen -> last_seen_ms
+
+        if 'first_seen' in df.columns:
+            df.rename(columns={'first_seen': 'first_seen_ms'}, inplace=True)
+        if 'last_seen' in df.columns:
+            df.rename(columns={'last_seen': 'last_seen_ms'}, inplace=True)
+
         # Convert milliseconds to UTC datetime
         df["first_seen_utc"] = pd.to_datetime(df["first_seen_ms"], unit="ms", utc=True)
         df["last_seen_utc"] = pd.to_datetime(df["last_seen_ms"], unit="ms", utc=True)
