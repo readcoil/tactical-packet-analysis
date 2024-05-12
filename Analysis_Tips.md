@@ -61,13 +61,13 @@ Matching Specific Payload:
 = 0x504F5354:
 ```
 The extracted 4 bytes are compared against the hexadecimal value 0x504F5354. This corresponds to the ASCII string "POST".
-The purpose here is to identify packets where the first four bytes of the TCP payload are "POST," which is indicative of an HTTP POST request.
+The purpose here is to identify packets where the first four bytes of the TCP payload are "POST," which is indicative of an HTTP POST request.  
 ***Reference:***
 https://www.middlewareinventory.com/blog/tcpdump-capture-http-get-post-requests-apache-weblogic-websphere/#How_to_capture_All_incoming_HTTP_GET_traffic_or_requests
 
 
 
-### Examples:
+### Further Examples:
 #### ARP
 ```bash
 tcpdump -r infile.pcap arp -w filtered.pcap
