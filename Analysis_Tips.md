@@ -15,21 +15,6 @@ The tool was build to demonstrate the capabilities of the NDPI library, however 
 
 An example of how to use the tool is as follows:
 ```bash
-<<<<<<< Updated upstream
-apt-get update && apt-get install ndpi
-ndpiReader -i <input.pcap> -K json -k outfile | tee -a summary.txt
-=======
-Installation (Ubuntu 22.04):
-
-sudo apt install software-properties-common wget
-sudo add-apt-repository universe
-wget https://packages.ntop.org/apt-stable/22.04/all/apt-ntop-stable.deb
-sudo apt install ./apt-ntop-stable.deb
-sudo apt update
-sudo apt install ndpi
-```
-Processing a PCAP:
-```bash
 ndpireader -i <input.pcap> -K json -k outfile | tee -a summary.txt
 >>>>>>> Stashed changes
 ```

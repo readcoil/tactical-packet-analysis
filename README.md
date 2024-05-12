@@ -30,15 +30,14 @@ sudo apt-get update
 sudo apt-get install tshark
 ```
 
-NDPI (Ubuntu 22.04):
-```bash
-sudo apt install software-properties-common wget
-sudo add-apt-repository universe
-wget https://packages.ntop.org/apt-stable/22.04/all/apt-ntop-stable.deb
-sudo apt install ./apt-ntop-stable.deb
-sudo apt update
-sudo apt install ndpi
+NDPI (Ubuntu 22.04) (Note; POC requires version 4.4.0):
+https://github.com/ntop/nDPI/tree/4.4-stable
+
+If you're on Mac, you can install with:
 ```
+brew install ndpi
+```
+
 4. Install strictstrings from https://github.com/readcoil/strictstrings (or modify the ExtractStrings task to use the native strings tool)
 4. Ensure all host tools are installed and executable from the command line
 ```
