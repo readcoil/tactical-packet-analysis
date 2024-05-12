@@ -15,8 +15,8 @@ The tool was build to demonstrate the capabilities of the NDPI library, however 
 
 An example of how to use the tool is as follows:
 ```bash
-pip install NPDIReader
-ndpireader -i <input.pcap> -K json -k outfile | tee -a summary.txt
+apt-get update && apt-get install ndpi
+ndpiReader -i <input.pcap> -K json -k outfile | tee -a summary.txt
 ```
 This will output a JSON file with the results of the analysis, and a summary of the analysis to the summary text file.
 
