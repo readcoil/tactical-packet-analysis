@@ -9,7 +9,7 @@ A flask dashboard is also included as a helper to automate basic processing and 
 Visualization is achieved using the data exploration libraries pandas and dtale (https://github.com/man-group/dtale).
 
 #### Implementation Notes:
-This is a proof of concept tool and is not intended for production use. It was originally developed to illustrate the concepts presented in the talk "Tactical Packet Analysis" at the 2024 SANS Europe ICS Summit. It may or may not be maintained, however pull requests are welcomed.
+This is a proof of concept tool and is not intended for production use. It was originally developed to illustrate the concepts presented in the talk "Tactical Packet Analysis" at the 2024 SANS Europe ICS Summit. It may or may not be maintained, however pull requests for initial issues are very welcomed.
 
 The modules deliberately leverage os-level commands to run tshark and other tools to demonstrate the ease of integration with existing tools. 
 In addition, a custom strings tool (https://github.com/readcoil/strictstrings) is included to extract strings from protocol-segmented pcap files.
@@ -21,8 +21,11 @@ In addition, a custom strings tool (https://github.com/readcoil/strictstrings) i
 pip install -r requirements.txt
 ```
 3. Install host-based requirements
+* https://github.com/ntop/nDPI
+* https://github.com/topics/tshark
 ```
-sudo apt-get install tshark ndpireader
+sudo apt-get update
+sudo apt-get install tshark ndpi
 ```
 4. Install strictstrings from https://github.com/readcoil/strictstrings (or modify the ExtractStrings task to use the native strings tool)
 4. Ensure all host tools are installed and executable from the command line
