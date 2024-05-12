@@ -23,9 +23,21 @@ pip install -r requirements.txt
 3. Install host-based requirements
 * https://github.com/ntop/nDPI
 * https://github.com/topics/tshark
-```
+
+Tshark:
+```bash
 sudo apt-get update
-sudo apt-get install tshark ndpi
+sudo apt-get install tshark
+```
+
+NDPI (Ubuntu 22.04):
+```bash
+sudo apt install software-properties-common wget
+sudo add-apt-repository universe
+wget https://packages.ntop.org/apt-stable/22.04/all/apt-ntop-stable.deb
+sudo apt install ./apt-ntop-stable.deb
+sudo apt update
+sudo apt install ndpi
 ```
 4. Install strictstrings from https://github.com/readcoil/strictstrings (or modify the ExtractStrings task to use the native strings tool)
 4. Ensure all host tools are installed and executable from the command line
